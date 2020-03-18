@@ -1,14 +1,3 @@
-.idea/compiler.xml
-.idea/description.html
-.idea/encodings.xml
-.idea/gradle.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/uiDesigner.xml
-.idea/vcs.xml
-.idea/workspace.xml
-.idea/artifacts/JavaFXApp.xml
 out/production/tcpdump_GUI/sample/Controller.class
 out/production/tcpdump_GUI/sample/Main.class
 out/production/tcpdump_GUI/sample/MainWindow.fxml
-tcpdump_GUI.iml

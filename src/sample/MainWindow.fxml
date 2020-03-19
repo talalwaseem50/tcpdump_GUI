@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="sample.Controller">
-    <children>
-        <Button fx:id="button" layoutX="126.0" layoutY="90" onAction="#handleButtonAction" text="Click Me!" />
-        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69"/>
-    </children>
-</AnchorPane>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="879.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <Button fx:id="startButton_ID" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" />
+            <Label fx:id="label" text="Label" />
+        </items>
+      </ToolBar>
+   </top>
+   <center>
+      <ScrollPane BorderPane.alignment="CENTER">
+         <content>
+            <TableView>
+              <columns>
+                <TableColumn maxWidth="1000.0" minWidth="-Infinity" prefWidth="500.0" resizable="false" sortable="false" text="Data" />
+              </columns>
+            </TableView>
+         </content>
+      </ScrollPane>
+   </center>
+   <left>
+      <VBox fx:id="protocolBox" prefHeight="495.0" prefWidth="136.0" BorderPane.alignment="CENTER" />
+   </left>
+</BorderPane>

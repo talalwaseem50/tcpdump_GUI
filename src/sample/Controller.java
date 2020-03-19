@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -52,30 +53,44 @@ public class Controller {
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        //label.setText("Running!");
+        label.setText("Running!");
         protocolList.get(0).increment();
 
-        String s;
-        Process p;
-        try {
-            p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 5");
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        MultithreadedRun mRun = new MultithreadedRun();
+        mRun.start();
+    }
 
-            while ((s = br.readLine()) != null) {
-                //System.out.println(s);
-                Packet pTemp = new Packet(s);
-                packetTable.getItems().add(pTemp);
+    /*  --------------------------------------------------------------------- */
+    private class MultithreadedRun extends Thread
+    {
+        public void run()
+        {
+            try
+            {
+                String s;
+                Process p;
+                p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 5");
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                while ((s = br.readLine()) != null) {
+                    //System.out.println(s);
+                    Packet pTemp = new Packet(s);
+                    packetTable.getItems().add(pTemp);
+                }
+
+                p.waitFor();
+                System.out.println ("exit: " + p.exitValue());
+                Platform.runLater(() -> {
+                    label.setText("Done!");
+                });
+                p.destroy();
+
             }
-
-            p.waitFor();
-            System.out.println ("exit: " + p.exitValue());
-            p.destroy();
-        } catch (Exception e) {
-            //e.printStackTrace();
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-
-
-
     }
 
 

@@ -3,3 +3,4 @@ out/production/tcpdump_GUI/sample/Main.class
 out/production/tcpdump_GUI/sample/MainWindow.fxml
 out/production/tcpdump_GUI/sample/Protocol.class
 out/production/tcpdump_GUI/sample/Packet.class
+out/production/tcpdump_GUI/sample/Controller$MultithreadedRun.class

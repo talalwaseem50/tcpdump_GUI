@@ -5,12 +5,14 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="879.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-          <Button fx:id="startButton_ID" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" />
-            <Label fx:id="label" text="Label" />
-        </items>
-      </ToolBar>
+
+       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+           <items>
+               <Button fx:id="startButton_ID" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" />
+               <Label fx:id="label" text="Label" />
+
+           </items>
+       </ToolBar>
    </top>
    <center>
        <TableView fx:id="packetTable">

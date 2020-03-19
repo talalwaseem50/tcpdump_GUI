@@ -8,6 +8,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 public class Controller {
@@ -15,6 +18,7 @@ public class Controller {
     @FXML private Button startButton_ID;
     @FXML private Label label;
     @FXML private VBox protocolBox;
+    @FXML private TableView packetTable;
 
 
     //private Protocol p1 = new Protocol("HTTP");
@@ -40,6 +44,10 @@ public class Controller {
             protocolBox.getChildren().add(lTemp);
         }
 
+        TableColumn dataColumn = (TableColumn) packetTable.getColumns().get(0);//new TableColumn("Temp");
+        dataColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
+
+
     }
 
     @FXML
@@ -47,17 +55,17 @@ public class Controller {
         //label.setText("Running!");
         protocolList.get(0).increment();
 
-
-
-        /*String s;
+        String s;
         Process p;
         try {
             p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 5");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-            while ((s = br.readLine()) != null)
-                System.out.println(s);
-            //System.out.println("line: " + s);
+            while ((s = br.readLine()) != null) {
+                //System.out.println(s);
+                Packet pTemp = new Packet(s);
+                packetTable.getItems().add(pTemp);
+            }
 
             p.waitFor();
             System.out.println ("exit: " + p.exitValue());
@@ -66,7 +74,7 @@ public class Controller {
             //e.printStackTrace();
         }
 
-         */
+
 
     }
 

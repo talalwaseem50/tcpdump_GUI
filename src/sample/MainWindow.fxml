@@ -13,15 +13,11 @@
       </ToolBar>
    </top>
    <center>
-      <ScrollPane BorderPane.alignment="CENTER">
-         <content>
-            <TableView>
-              <columns>
-                <TableColumn maxWidth="1000.0" minWidth="-Infinity" prefWidth="500.0" resizable="false" sortable="false" text="Data" />
-              </columns>
-            </TableView>
-         </content>
-      </ScrollPane>
+       <TableView fx:id="packetTable">
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="1000.0" sortable="false" text="Data" />
+           </columns>
+       </TableView>
    </center>
    <left>
       <VBox fx:id="protocolBox" prefHeight="495.0" prefWidth="136.0" BorderPane.alignment="CENTER" />

@@ -17,7 +17,22 @@
    <center>
        <TableView fx:id="packetTable">
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="1000.0" sortable="false" text="Data" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Time" />
+           </columns>
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="IP" />
+           </columns>
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Length" />
+           </columns>
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Source Add" />
+           </columns>
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Destination Add" />
+           </columns>
+           <columns>
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0"  sortable="false" text="Header Data" />
            </columns>
        </TableView>
    </center>

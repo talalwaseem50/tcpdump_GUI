@@ -35,6 +35,11 @@ public class Protocol {
         value.setValue(pName + ": " + pCount);
     }
 
+    public void clear() {
+        pCount = 0;
+        value.setValue(pName + ": " + pCount);
+    }
+
 
     public String getpName() {
         return pName;

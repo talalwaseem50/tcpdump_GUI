@@ -3,32 +3,31 @@ package sample;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 public class Controller {
 
     @FXML private Button startButton_ID;
-    @FXML private Label label;
+    @FXML private Label status_ID;
     @FXML private VBox protocolBox;
     @FXML private TableView packetTable;
 
+    private MultithreadedRun mRun;
+    private volatile boolean flag = false;
 
-    //private Protocol p1 = new Protocol("HTTP");
     ArrayList<Protocol> protocolList;
     ArrayList<Packet> packetList = null;
-    public void initialize() {
-        label.setText("Initialized");
 
+    public void initialize() {
         ArrayList<String> pNameList = new ArrayList<String>();
         pNameList.add("HTTP");
         pNameList.add("SMTP");
@@ -38,10 +37,9 @@ public class Controller {
         pNameList.add("POP3");
         pNameList.add("TELNET");
         pNameList.add("NTP");
-
+        pNameList.add("Total");
 
         protocolList = new ArrayList<Protocol>();
-
         for (String s : pNameList) {
             Protocol pTemp = new Protocol(s);
             protocolList.add(pTemp);
@@ -50,21 +48,43 @@ public class Controller {
             lTemp.textProperty().bind(pTemp.valueProperty());
             protocolBox.getChildren().add(lTemp);
         }
+
         String packetComponents[] = {"time","IP","length","srcAddress","destAddress","headerData"};
         for(int i = 0; i < packetTable.getColumns().size(); i++) {
-            TableColumn dataColumn = (TableColumn) packetTable.getColumns().get(i);//new TableColumn("Temp");
+            TableColumn dataColumn = (TableColumn) packetTable.getColumns().get(i);
             dataColumn.setCellValueFactory(new PropertyValueFactory<>(packetComponents[i]));
         }
 
+        status_ID.setText("Ready!");
     }
 
     @FXML
-    private void handleButtonAction(ActionEvent event) {
+    private void handleResetButtonAction(ActionEvent event) {
+        packetTable.getItems().clear();
+        status_ID.setText("Ready!");
+        startButton_ID.setText("Start");
+        flag = false;
+        for(int i = 0; i < protocolList.size(); ++i)
+            protocolList.get(i).clear();
+    }
 
-        label.setText("Running!");
+    @FXML
+    private void handleStartButtonAction(ActionEvent event) {
 
-        MultithreadedRun mRun = new MultithreadedRun();
-        mRun.start();
+        if (flag == false) {
+            status_ID.setText("Running!");
+            startButton_ID.setText("Stop");
+
+            flag = true;
+            mRun = new MultithreadedRun();
+            mRun.start();
+        }
+        else {
+            flag = false;
+            status_ID.setText("Stopped!");
+            startButton_ID.setText("Start");
+        }
+
 
     }
 
@@ -81,8 +101,8 @@ public class Controller {
                 p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 5 -vv");
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-                while ((s = br.readLine()) != null) {
-                    System.out.println(s);
+                while ((s = br.readLine()) != null && flag == true) {
+                    //System.out.println(s);
                     StringTokenizer tokenizer = new StringTokenizer(s);
                     String time = tokenizer.nextToken(" ");
                     String IP = tokenizer.nextToken(" ");
@@ -104,9 +124,9 @@ public class Controller {
                         destAddress = tokenizer.nextToken(":");
                         destAddress = destAddress.substring(2);
                         packetData = tokenizer.nextToken("\n");
-                        System.out.println(s);
-                    }else
-                    {
+                        //System.out.println(s);
+                    }
+                    else {
                         headerData = tokenizer.nextToken(")").toString().concat("))");
                         length = tokenizer.nextToken(")");
                         srcAddress = tokenizer.nextToken(">");
@@ -115,37 +135,48 @@ public class Controller {
 
                     }
 
-                    Packet pTemp = new Packet(time,length,IP,headerData,srcAddress,destAddress,packetData);
-                    packetTable.getItems().add(pTemp);
-                    packetList.add(pTemp);
+                    Packet packet = new Packet(time, length, IP, headerData, srcAddress, destAddress, packetData);
+                    packetTable.getItems().add(packet);
+                    packetList.add(packet);
+
+                    Platform.runLater(() -> {
+                        if (packet.getSrcAddress().contains("http") || packet.getDestAddress().contains("http")) {
+                            protocolList.get(0).increment();
+                        } else if (packet.getSrcAddress().contains("smtp") || packet.getDestAddress().contains("smtp")) {
+                            protocolList.get(1).increment();
+                        } else if (packet.getSrcAddress().contains("voip") || packet.getDestAddress().contains("voip")) {
+                            protocolList.get(2).increment();
+                        } else if (packet.getSrcAddress().contains("ftp") || packet.getDestAddress().contains("ftp")) {
+                            protocolList.get(3).increment();
+                        } else if (packet.getSrcAddress().contains("domain") || packet.getDestAddress().contains("domain") || packet.getSrcAddress().contains("dns") || packet.getDestAddress().contains("dns")) {
+                            protocolList.get(4).increment();
+                        } else if (packet.getSrcAddress().contains("25") || packet.getDestAddress().contains("25")) {
+                            protocolList.get(5).increment();
+                        } else if (packet.getSrcAddress().contains("telnet") || packet.getDestAddress().contains("telnet")) {
+                            protocolList.get(6).increment();
+                        } else if (packet.getSrcAddress().contains("ntp") || packet.getDestAddress().contains("ntp")) {
+                            protocolList.get(7).increment();
+                        }
+                        protocolList.get(8).increment();
+                    });
+
+                    try {
+                        Thread.currentThread().sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
-                p.waitFor();
-                System.out.println ("exit: " + p.exitValue());
+                //p.waitFor();
+                //System.out.println ("exit: " + p.exitValue());
+
                 Platform.runLater(() -> {
-                            for(int i = 0; i < packetList.size(); i++) {
-                                if (packetList.get(i).getSrcAddress().contains("http") || packetList.get(i).getDestAddress().contains("http")) {
-                                    protocolList.get(0).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("smtp") || packetList.get(i).getDestAddress().contains("smtp")) {
-                                    protocolList.get(1).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("voip") || packetList.get(i).getDestAddress().contains("voip")) {
-                                    protocolList.get(2).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("ftp") || packetList.get(i).getDestAddress().contains("ftp")) {
-                                    protocolList.get(3).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("domain") || packetList.get(i).getDestAddress().contains("domain") || packetList.get(i).getSrcAddress().contains("dns") || packetList.get(i).getDestAddress().contains("dns")) {
-                                    protocolList.get(4).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("25") || packetList.get(i).getDestAddress().contains("25")) {
-                                    protocolList.get(5).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("telnet") || packetList.get(i).getDestAddress().contains("telnet")) {
-                                    protocolList.get(6).increment();
-                                } else if (packetList.get(i).getSrcAddress().contains("ntp") || packetList.get(i).getDestAddress().contains("ntp")) {
-                                    protocolList.get(6).increment();
-                                }
-                            }
-                    label.setText("Done!");
+                    if (flag == true)
+                        status_ID.setText("Done!");
+                    startButton_ID.setText("Start");
                 });
                 p.destroy();
-
             }
             catch (Exception e)
             {
@@ -154,5 +185,47 @@ public class Controller {
         }
     }
 
+    /**
+     * Menu Actions
+     */
 
+    @FXML
+    private void handleExitMenuAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit");
+        alert.setHeaderText("Are you Sure?");
+        if (packetTable.getItems().size() != 0)
+            alert.setContentText("Any unsaved results will be lost.");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            status_ID.setText("Yahoo!");
+        }
+    }
+
+    @FXML
+    private void handleAboutMenuAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("tcpdump_GUI");
+        alert.setContentText("Description goes here");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            status_ID.setText("Yahoo!");
+        }
+    }
+
+    @FXML
+    private void handlePrefMenuAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("tcpdump_GUI");
+        alert.setContentText("sahskkaskhk");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            status_ID.setText("Yahoo!");
+        }
+    }
 }

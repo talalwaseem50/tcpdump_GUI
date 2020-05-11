@@ -37,7 +37,9 @@ public class Controller {
         pNameList.add("POP3");
         pNameList.add("TELNET");
         pNameList.add("NTP");
+        pNameList.add("ARP");
         pNameList.add("Total");
+
 
         protocolList = new ArrayList<Protocol>();
         for (String s : pNameList) {
@@ -98,22 +100,25 @@ public class Controller {
                 packetList = new ArrayList<Packet>();
                 String s;
                 Process p;
-                p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 5 -vv");
+                p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 50 -vv");
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
                 while ((s = br.readLine()) != null && flag == true) {
-                    //System.out.println(s);
+                    System.out.println(s);
                     StringTokenizer tokenizer = new StringTokenizer(s);
-                    String time = tokenizer.nextToken(" ");
-                    String IP = tokenizer.nextToken(" ");
+                    String time = null;
+                    String IP = null;
                     String length = null;
                     String headerData = null;
                     String srcAddress = null;
                     String destAddress = null;
                     String packetData = null;
                     String appProtocol = null;
-                    if(!s.contains("IP6"))
+                    if(!s.contains("IP6") && !s.contains("ARP") && s.contains("IP"))
                     {
+                        time = tokenizer.nextToken(" ");
+                        time = time.substring(0,8);
+                        IP = tokenizer.nextToken(" ");
                         headerData = tokenizer.nextToken(")").toString().concat("))");
                         length = tokenizer.nextToken(")");
                         length = length.substring(2);
@@ -126,21 +131,39 @@ public class Controller {
                         packetData = tokenizer.nextToken("\n");
                         //System.out.println(s);
                     }
-                    else {
+                    else if(s.contains("IP6")){
+                        time = tokenizer.nextToken(" ");
+                        time = time.substring(0,8);
+                        IP = tokenizer.nextToken(" ");
                         headerData = tokenizer.nextToken(")").toString().concat("))");
                         length = tokenizer.nextToken(")");
+                        length = length.substring(9);
                         srcAddress = tokenizer.nextToken(">");
                         destAddress = tokenizer.nextToken(":");
                         destAddress = destAddress.substring(2);
 
+                    }else if(s.contains("ARP"))
+                    {
+                        time = " ";
+                        IP = " ";
+                        length = " ";
+                        headerData = " ";
+                        srcAddress = s;
+                        destAddress = " ";
+                        packetData = " ";
                     }
 
                     Packet packet = new Packet(time, length, IP, headerData, srcAddress, destAddress, packetData);
-                    packetTable.getItems().add(packet);
+                    if(!srcAddress.contains("ARP")) {
+                        packetTable.getItems().add(packet);
+                    }
                     packetList.add(packet);
 
                     Platform.runLater(() -> {
-                        if (packet.getSrcAddress().contains("http") || packet.getDestAddress().contains("http")) {
+                        if(packet.getSrcAddress().contains("ARP"))
+                        {
+                            protocolList.get(0).increment();
+                        }else if (packet.getSrcAddress().contains("http") || packet.getDestAddress().contains("http")) {
                             protocolList.get(0).increment();
                         } else if (packet.getSrcAddress().contains("smtp") || packet.getDestAddress().contains("smtp")) {
                             protocolList.get(1).increment();
@@ -157,7 +180,7 @@ public class Controller {
                         } else if (packet.getSrcAddress().contains("ntp") || packet.getDestAddress().contains("ntp")) {
                             protocolList.get(7).increment();
                         }
-                        protocolList.get(8).increment();
+                        protocolList.get(9).increment();
                     });
 
                     try {

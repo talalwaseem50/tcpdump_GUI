@@ -162,7 +162,7 @@ public class Controller {
                     Platform.runLater(() -> {
                         if(packet.getSrcAddress().contains("ARP"))
                         {
-                            protocolList.get(0).increment();
+                            protocolList.get(8).increment();
                         }else if (packet.getSrcAddress().contains("http") || packet.getDestAddress().contains("http")) {
                             protocolList.get(0).increment();
                         } else if (packet.getSrcAddress().contains("smtp") || packet.getDestAddress().contains("smtp")) {

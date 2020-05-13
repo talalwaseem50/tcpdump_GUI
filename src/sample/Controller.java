@@ -38,8 +38,8 @@ public class Controller {
         pNameList.add("TELNET");
         pNameList.add("NTP");
         pNameList.add("ARP");
+        pNameList.add("Others");
         pNameList.add("Total");
-
 
         protocolList = new ArrayList<Protocol>();
         for (String s : pNameList) {
@@ -154,8 +154,10 @@ public class Controller {
                     }
 
                     Packet packet = new Packet(time, length, IP, headerData, srcAddress, destAddress, packetData);
-                    if(!srcAddress.contains("ARP")) {
-                        packetTable.getItems().add(packet);
+                    if (srcAddress != null) {
+                        if (!srcAddress.contains("ARP")) {
+                            packetTable.getItems().add(packet);
+                        }
                     }
                     packetList.add(packet);
 
@@ -179,8 +181,10 @@ public class Controller {
                             protocolList.get(6).increment();
                         } else if (packet.getSrcAddress().contains("ntp") || packet.getDestAddress().contains("ntp")) {
                             protocolList.get(7).increment();
+                        } else {
+                            protocolList.get(9).increment();
                         }
-                        protocolList.get(9).increment();
+                        protocolList.get(10).increment();
                     });
 
                     try {

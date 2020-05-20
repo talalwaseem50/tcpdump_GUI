@@ -30,8 +30,9 @@
    <left>
       <VBox fx:id="protocolBox" prefHeight="482.0" prefWidth="158.0" BorderPane.alignment="CENTER">
          <children>
-               <Button fx:id="startButton_ID" mnemonicParsing="false" onAction="#handleStartButtonAction" prefHeight="37.0" prefWidth="173.0" text="Start" />
+               <Button fx:id="startButton_ID" mnemonicParsing="false" onAction="#handleStartButtonAction" prefHeight="37.0" prefWidth="165.0" text="Start" />
                <Button fx:id="resetButton_ID" mnemonicParsing="false" onAction="#handleResetButtonAction" prefHeight="37.0" prefWidth="165.0" text="Reset" />
+               <Button fx:id="graphButton_ID" mnemonicParsing="false" onAction="#handleGraphButtonAction" prefHeight="37.0" prefWidth="165.0" text="Visualize" />
          </children></VBox>
    </left>
    <top>

@@ -10,9 +10,13 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class Controller {
 
@@ -86,8 +90,21 @@ public class Controller {
             status_ID.setText("Stopped!");
             startButton_ID.setText("Start");
         }
+    }
 
-
+    @FXML
+    private void handleGraphButtonAction(ActionEvent event) {
+        try {
+            Parent root1 = FXMLLoader.load(getClass().getResource("graph.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Graph");
+            stage.setScene(new Scene(root1));
+            stage.show();
+        }
+        catch (Exception e) {
+            System.out.println("Error Building Graph");
+            e.printStackTrace();
+        }
     }
 
     /*  --------------------------------------------------------------------- */

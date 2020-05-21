@@ -8,22 +8,22 @@
    <center>
        <TableView fx:id="packetTable" prefHeight="482.0" prefWidth="737.0">
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Time" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="120.0" sortable="false" text="Time" />
            </columns>
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="IP" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="60.0" sortable="false" text="IP" />
            </columns>
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Length" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="120.0" sortable="false" text="Length" />
            </columns>
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Source Add" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="220.0" sortable="false" text="Source Add" />
            </columns>
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Destination Add" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="220.0" sortable="false" text="Destination Add" />
            </columns>
            <columns>
-               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="200.0" sortable="false" text="Header Data" />
+               <TableColumn maxWidth="1200.0" minWidth="-Infinity" prefWidth="460.0" sortable="false" text="Header Data" />
            </columns>
        </TableView>
    </center>

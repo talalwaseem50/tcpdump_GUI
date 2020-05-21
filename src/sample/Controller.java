@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.StringTokenizer;
-import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,19 +15,25 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Controller {
 
+    @FXML private Button graphButton_ID;
+    @FXML private Button resetButton_ID;
     @FXML private Button startButton_ID;
+
     @FXML private Label status_ID;
     @FXML private VBox protocolBox;
     @FXML private TableView packetTable;
 
     private MultithreadedRun mRun;
     private volatile boolean flag = false;
+    private String packetsToBe = "10";
+    private String packetsString = "";
 
-    ArrayList<Protocol> protocolList;
+    ArrayList<Protocol> protocolList = null;
     ArrayList<Packet> packetList = null;
 
     public void initialize() {
@@ -52,6 +57,7 @@ public class Controller {
 
             Label lTemp = new Label();
             lTemp.textProperty().bind(pTemp.valueProperty());
+            lTemp.setFont(new Font("Arial", 18));
             protocolBox.getChildren().add(lTemp);
         }
 
@@ -80,6 +86,12 @@ public class Controller {
         if (flag == false) {
             status_ID.setText("Running!");
             startButton_ID.setText("Stop");
+            resetButton_ID.setDisable(true);
+
+            if (packetsToBe.matches("0"))
+                packetsString = "";
+            else
+                packetsString = " -c " + packetsToBe.trim();
 
             flag = true;
             mRun = new MultithreadedRun();
@@ -89,13 +101,19 @@ public class Controller {
             flag = false;
             status_ID.setText("Stopped!");
             startButton_ID.setText("Start");
+            resetButton_ID.setDisable(false);
         }
     }
 
     @FXML
     private void handleGraphButtonAction(ActionEvent event) {
         try {
-            Parent root1 = FXMLLoader.load(getClass().getResource("graph.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Graph.fxml"));
+            Parent root1 = loader.load();
+
+            GraphController gC = loader.getController();
+            gC.setData(protocolList);
+
             Stage stage = new Stage();
             stage.setTitle("Graph");
             stage.setScene(new Scene(root1));
@@ -117,7 +135,7 @@ public class Controller {
                 packetList = new ArrayList<Packet>();
                 String s;
                 Process p;
-                p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump -c 50 -vv");
+                p = Runtime.getRuntime().exec("sudo /usr/sbin/tcpdump" + packetsString + " -vv");
                 BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
                 while ((s = br.readLine()) != null && flag == true) {
@@ -219,6 +237,7 @@ public class Controller {
                     if (flag == true)
                         status_ID.setText("Done!");
                     startButton_ID.setText("Start");
+                    resetButton_ID.setDisable(false);
                 });
                 p.destroy();
             }
@@ -243,7 +262,8 @@ public class Controller {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
-            status_ID.setText("Yahoo!");
+            Stage stage = (Stage) startButton_ID.getScene().getWindow();
+            stage.close();
         }
     }
 
@@ -252,7 +272,7 @@ public class Controller {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About");
         alert.setHeaderText("tcpdump_GUI");
-        alert.setContentText("Description goes here");
+        alert.setContentText("A JavaFX application made to act as a GUI for \nLinux tcpdump utility.");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
@@ -262,14 +282,13 @@ public class Controller {
 
     @FXML
     private void handlePrefMenuAction(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("tcpdump_GUI");
-        alert.setContentText("sahskkaskhk");
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Preference");
+        dialog.setHeaderText("How many Packets should be captured? \n(+ve integer values) (0 for infinite)" );
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            status_ID.setText("Yahoo!");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            packetsToBe = result.get();
         }
     }
 }

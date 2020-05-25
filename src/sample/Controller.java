@@ -276,7 +276,7 @@ public class Controller {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
-            status_ID.setText("Yahoo!");
+            //status_ID.setText("Yahoo!");
         }
     }
 
